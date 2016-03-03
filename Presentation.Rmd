@@ -1,0 +1,252 @@
+---
+title: "Faire des figures avec ggplot2"
+author: "Matthias Grenié"
+date: "3 mars 2016"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+## Statistiques Graphiques
+
+```{r plotPressure, eval = TRUE, out.height='5cm', out.width='6cm', fig.align='center'}
+plot(pressure)
+```
+
+\pause
+
+De quoi est constitué un graphique ?
+
+
+## Réponse
+
+
+\begin{figure}
+  \caption{Wilkinson, *Grammar of Graphics*, 2005}
+  \includegraphics[scale=0.15]{images/WilkinsonGrammarOfGraphics.jpg}
+\end{figure}
+
+\pause
+
+\smallskip
+
+**Grammaire ?**
+
+\pause
+
+\smallskip
+
+> A grammar provides a strong foundation for understanding a diverse range of graphics.
+
+\smallskip
+
+\pause
+
+Décomposition graphique en éléments simples
+
+- Données
+- Éléments (Points, Lignes, etc.)
+- Échelles (en X ? en Y ? en couleur ?)
+- Coordonnées (cartésiennes ? polaires ? autres ?)
+- Transformations (moyenne, comptes, etc.)
+
+
+
+## ggplot2
+
+Hadley Wickham \includegraphics[scale = 0.1]{images/Hadley.jpg}
+
+\bigskip
+
+\pause
+
+Package **gg**plot2 (**g**rammar of **g**raphics)
+
+\bigskip
+
+\pause
+
+*A Layered Grammar of Graphics* en 2010 inspiration Wilkinson
+
+
+## Préambule
+
+Installer le package !
+```{r, eval=FALSE}
+install.packages("ggplot2")
+```
+
+Le charger
+```{r, eval = TRUE}
+library(ggplot2)
+```
+
+
+## Exemple avec `qplot()`
+
+Jeu de données "trees"
+
+```{r, eval = TRUE}
+# On charge les données
+data(trees)
+head(trees, n = 3)
+```
+
+\pause
+
+**`q`**`plot()` \pause = **`quick`**`plot()` \pause = analogue de la fonction `plot()` pour ggplot2
+
+\pause
+
+```{r qplotEx, eval = T, out.height='2cm', out.width='3cm'}
+qplot(Girth, Height, data = trees)
+```
+
+
+## Avec la fonction `ggplot()`
+
+Données <=> variable **esthétique** du plot (**aes**thetics)
+
+```{r ggplotEx}
+ggplot(data = trees, aes(x = Girth, y = Height)) +
+  geom_point()
+```
+
+\pause
+Types de variable esthétique :
+
+- x
+- y
+- taille
+- couleur
+- type de ligne
+- forme
+
+## `aes()`
+
+`aes()` autre example : la **couleur**
+
+```{r ggplot2Color}
+ggplot(data = trees, aes(x = Girth, y = Height,
+                         color = Volume)) +
+  geom_point()
+```
+
+Ou la taille des points :
+
+```{r ggplot2Size}
+ggplot(data = trees, aes(x = Girth, y = Height,
+                         size = Volume)) +
+  geom_point()
+```
+
+
+## Objets **géom**étriques
+
+**Même** données, représentations **différentes** :
+
+```{r}
+# Nuage de points
+ggplot(data = trees, aes(x = Girth, y = Height)) +
+  geom_point()
+
+# Ligne
+ggplot(data = trees, aes(x = Girth, y = Height)) +
+  geom_line()
+
+# Histogramme
+ggplot(data = trees, aes(x =  Girth)) +
+  geom_histogram()
+```
+
+
+## Calques
+
+Système de Calques de ggplot2 :
+
+\begin{figure}
+  \includegraphics[scale = 3]{images/layers-icon.png}
+\end{figure}
+
+\pause
+
+Exemple : ajout régression linéaire
+
+```{r ggplot2lm}
+ggplot(data = trees, aes(x = Girth, y = Height)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+**Question :** Que se serait-il passé si on avait inversé l'ordre ?
+
+
+
+## Facetting
+
+Subdivise les graphiques en fonction des sous-jeux de données:
+
+```{r facets}
+ggplot(InsectSprays, aes(x = count, color = spray)) +
+  geom_density()
+
+ggplot(InsectSprays, aes(x = count, color = spray)) +
+  facet_grid(. ~ spray) +
+  geom_density()
+```
+
+
+## Échelles
+
+Facile de changer une échelle
+
+```{r}
+ggplot(data = trees, aes(x = Girth, y = Height)) +
+  geom_point() +
+  scale_x_log10()
+```
+
+\pause
+
+Ou `scale_x_sqrt()` ou `scale_x_continous(trans = 'log10')`
+
+
+## Exemples de graphiques (1)
+
+\begin{figure}
+  \includegraphics[scale = 0.5]{images/Exemple1.pdf}
+\end{figure}
+
+
+
+## Exemples de graphiques (2)
+
+\begin{figure}
+  \includegraphics[scale = 0.5]{images/Exemple2.pdf}
+\end{figure}
+
+
+## Exemples de graphiques (3)
+
+\begin{figure}
+  \includegraphics[scale = 0.5]{images/Exemple3.pdf}
+\end{figure}
+
+
+## Intérêts de ggplot2
+
+- Grosse Communauté
+- Facilement Extensible (version >= 2.0.0)
+- Facilement Paramétrable
+- Beau graphiques par défaut
+
+
+## Et après ?
+
+- [Documentation officielle](http://docs.ggplot2.org/current/) de `ggplot2` 
+- [R graph catalog](http://shiny.stat.ubc.ca/r-graph-catalog/) source d'inspiration
+- [O'Reilly R Cookbook](http://www.cookbook-r.com/Graphs/)
+- Questions sur StackOverflow (~12000 questions)
+- Packages annexes (`GGally`, `ggtree`, `ggmap`, etc.)
